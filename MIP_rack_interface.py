@@ -43,13 +43,12 @@ def add_constraints(problem, num_vms, vm_consumption, original_placement, vm_tra
    # constraint of y
     for i in range(M):
         for j in range(i+1, M):
-            for u in range(N):
-                for v in range(N): 
-                    x_1, x_2 = "x_{0}_{1}".format(i, u), "x_{0}_{1}".format(j, v)
-                    y = "y_{0}_{1}_{2}_{3}".format(i, j, u, v)
-                    rows.append([[x_1, y], [1, -1]])
-                    rows.append([[x_2, y], [1, -1]])
-                    rows.append([[x_1, x_2, y], [1, 1, -1]])
+            for u in range(N): 
+                x_1, x_2 = "x_{0}_{1}".format(i, u), "x_{0}_{1}".format(j, u)
+                y = "y_{0}_{1}_{2}_{3}".format(i, j, u, u)
+                rows.append([[x_1, y], [1, -1]])
+                rows.append([[x_2, y], [1, -1]])
+                rows.append([[x_1, x_2, y], [1, 1, -1]])
 
     # constraint of resources
     for j in range(N):
@@ -112,7 +111,7 @@ def add_constraints(problem, num_vms, vm_consumption, original_placement, vm_tra
     
   
     placement_constraints = [1 for k in range(M)]
-    for k in range(M*(M-1)*N*N/2):
+    for k in range(M*(M-1)*N/2):
         placement_constraints += [0, 0, 1]
     for k in range(N):
         placement_constraints += [physical_config.constraint_rack_cpu[k], physical_config.constraint_rack_memory[k], physical_config.constraint_rack_disk[k]]
@@ -130,7 +129,7 @@ def add_constraints(problem, num_vms, vm_consumption, original_placement, vm_tra
 
 
 
-    placement_senses = 'E' * M + 'GGL' * (M*(M-1)*N*N/2)       # E means 'equal'  
+    placement_senses = 'E' * M + 'GGL' * (M*(M-1)*N/2)       # E means 'equal'  
     placement_senses += 'L' * (3*N)     #resources
     placement_senses += 'E' * physical_config.num_links
     placement_senses += 'L' * physical_config.num_links
@@ -234,7 +233,7 @@ def set_and_solve_problem(num_vms, vm_consumption, vm_traffic_matrix, original_p
     print "begin solving..."
     placement.solve()
 
-    placement.write("openstack_output.txt")
+    #placement.write("openstack_output.txt")
     print "Get the solution"
 
     return placement

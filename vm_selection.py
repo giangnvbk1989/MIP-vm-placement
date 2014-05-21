@@ -19,7 +19,7 @@ def compute_largest_flows(num_vms, traffic_matrix, original_placement, physical_
     traffic = [0 for k in range(num_vms)]
     for k in range(num_vms):
         for i in range(num_vms):
-            if physical_config.which_rack[original_placement[k]] == physical_config.which_rack[original_placement[i]]:
+            if k == i or physical_config.which_rack[original_placement[k]] == physical_config.which_rack[original_placement[i]]:
                 continue
             traffic[k] += traffic_matrix[k][i]
     # the list traffic is INDEED the traffic each vm contributes on each link
