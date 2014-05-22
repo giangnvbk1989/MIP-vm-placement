@@ -7,6 +7,7 @@ import cplex
 import random
 from vm_selection import select_most_noisy_vms
 from target_server_selection import choose_server_in_rack
+import copy
 
 
 def compute_two_kinds_of_traffic(M, rack, vm_mobile, physical_config, num_all_vms, most_noisy_vms, original_placement, vm_traffic_matrix):
@@ -299,14 +300,27 @@ def process_result(placement, num_top_noisy_vms, most_noisy_vms, original_placem
     return migration_operations 
 
         
+def make_matrix_symmetric(M, n):
+    X = M
+    M_transpose = zip(*M)
+    for k in range(n):
+        for i in range(n):
+            X[k][i] += M_transpose[k][i]
+
+    return X
 
 
 # the firt main interface
-def migrate_policy(num_vms, vm_consumption, vm_traffic_matrix, original_placement, physical_config, num_top_noisy_vms = 2, fixed_vms = [], cost_migration = []):
+def migrate_policy(num_vms, vm_consumption, vm_traffic_matrix, original_placement, config, num_top_noisy_vms = 10, fixed_vms = [], cost_migration = []):
+    # If the given traffic matrix M is not symmetric, I should replace it by M+M^T
+    vm_traffic_matrix = make_matrix_symmetric(vm_traffic_matrix, num_vms)
+
+    physical_config = copy.deepcopy(config)
+
     # adjustable parameters
     #num_top_noisy_vms = 2
     if cost_migration == []:
-        cost_migration = [0 for k in range(num_vms)]
+        cost_migration = [1 for k in range(num_vms)]
 
     if num_top_noisy_vms > num_vms:
         num_top_noisy_vms = num_vms
