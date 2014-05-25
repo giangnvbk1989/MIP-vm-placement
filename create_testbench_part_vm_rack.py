@@ -15,7 +15,7 @@ num_servers = num_racks * num_server_per_rack
 # Suppos all racks are linked to a single switch, then num_links is the same with the number of R
 num_links = num_racks
 
-num_vms_per_server = 4
+num_vms_per_server = 2
 
 num_vms = num_vms_per_server * num_servers
 
@@ -96,6 +96,21 @@ def generate_vm_consumption():
     #print "vm consumption", vm_consumption
     return vm_consumption
 
+def compute_traffic(num_vms, traffic, placement, test_config):
+    link_traffic = [0 for k in range(test_config.num_links)]
+
+    for p in range(num_vms):
+        for q in range(p+1, num_vms):
+            rack_p, rack_q = test_config.which_rack[placement[p]], test_config.which_rack[placement[q]]
+            if rack_p == rack_q:
+                continue
+            link_traffic[rack_p] += traffic[p][q]
+            link_traffic[rack_q] += traffic[q][p]
+    
+    return link_traffic, max(link_traffic)
+
+
+
 def generate_original_placement():
     original_placement = []
     for k in range(num_servers):
@@ -114,4 +129,13 @@ if __name__ == "__main__":
     test_config = create_physical_config_instance()
     
     print "migrate_policy is being called..."
-    migrate_policy(num_vms, all_vm_consumption, traffic, all_original_placement, test_config, 10, [719])
+    operations = migrate_policy(num_vms, all_vm_consumption, traffic, all_original_placement, test_config, 10, [])
+    
+    link_traffic = compute_traffic(num_vms, traffic, all_original_placement, test_config)
+    print "before migration:", link_traffic
+
+    for migration in operations:
+        all_original_placement[migration[0]] = migration[1]
+    
+    link_traffic = compute_traffic(num_vms, traffic, all_original_placement, test_config)
+    print "after migration:", link_traffic

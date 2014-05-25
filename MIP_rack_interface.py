@@ -156,7 +156,7 @@ def set_problem_data(p, num_vms, vm_consumption, vm_traffic_matrix, original_pla
     objective = [0 for k in range(M*N+M*(M-1)/2*N*N+physical_config.num_links*2)]
     objective.append(1)
     for k in range(M):
-        rack = original_placement[most_noisy_vms[k]]
+        rack = physical_config.which_rack[original_placement[most_noisy_vms[k]]]
         objective[N*k + rack] = -cost_migration[most_noisy_vms[k]]
 
 
@@ -260,7 +260,7 @@ def compute_link_used_capacity(num_vms, original_placement, traffic, most_noisy_
 
 
 # get the migration operations from the result
-def process_result(placement, num_top_noisy_vms, most_noisy_vms, original_placement, num_racks):
+def process_result(placement, num_top_noisy_vms, most_noisy_vms, original_placement, num_racks, which_rack):
     migration_operations = []
 
     sol = placement.solution
@@ -287,13 +287,13 @@ def process_result(placement, num_top_noisy_vms, most_noisy_vms, original_placem
     print most_noisy_vms
     for k in range(num_top_noisy_vms):
         vm = most_noisy_vms[k]
-        if 1 == sol.get_values(original_placement[vm] + k*num_racks):
-            print vm, ": stays in ", original_placement[vm]
+        if 1 == sol.get_values(which_rack[original_placement[vm]] + k*num_racks):
+            print vm, ": stays in rack", which_rack[original_placement[vm]]
         else:
             for i in range(num_racks):
                 #print sol.get_values(k*num_racks + i)
                 if 1 == sol.get_values(k*num_racks + i):
-                    print vm, ": originally in ", original_placement[vm], ", now moves to", i
+                    print vm, ": originally in rack", which_rack[original_placement[vm]], ", now moves to rack", i
                     migration_operations.append([vm, i])
                     break
 
@@ -361,7 +361,7 @@ def migrate_policy(num_vms, vm_consumption, vm_traffic_matrix, original_placemen
     print "begin set_and_solve_problem"
     placement = set_and_solve_problem(num_top_noisy_vms, busy_vm_consumption, vm_traffic_matrix, original_placement, physical_config, cost_migration, num_vms, most_noisy_vms, link_capacity_consumed)
 
-    migrate_to_rack = process_result(placement, num_top_noisy_vms, most_noisy_vms, original_placement, physical_config.num_racks)
+    migrate_to_rack = process_result(placement, num_top_noisy_vms, most_noisy_vms, original_placement, physical_config.num_racks, physical_config.which_rack)
     #print migrate_to_rack
     migrate_to_server = choose_server_in_rack(migrate_to_rack, vm_consumption, physical_config)
     
