@@ -311,7 +311,7 @@ def make_matrix_symmetric(M, n):
 
 
 # the firt main interface
-def migrate_policy(num_vms, vm_consumption, vm_traffic_matrix, original_placement, config, num_top_noisy_vms = 10, fixed_vms = [], cost_migration = []):
+def migrate_policy(num_vms, vm_consumption, vm_traffic_matrix, original_placement, config, num_top_noisy_vms = 15, fixed_vms = [], cost_migration = []):
     # If the given traffic matrix M is not symmetric, I should replace it by M+M^T
     vm_traffic_matrix = make_matrix_symmetric(vm_traffic_matrix, num_vms)
 

@@ -129,7 +129,7 @@ if __name__ == "__main__":
     test_config = create_physical_config_instance()
     
     print "migrate_policy is being called..."
-    operations = migrate_policy(num_vms, all_vm_consumption, traffic, all_original_placement, test_config, 10, [])
+    operations = migrate_policy(num_vms, all_vm_consumption, traffic, all_original_placement, test_config, 15, [])
     
     link_traffic = compute_traffic(num_vms, traffic, all_original_placement, test_config)
     print "before migration:", link_traffic

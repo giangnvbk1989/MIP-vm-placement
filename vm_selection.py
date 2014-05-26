@@ -1,7 +1,7 @@
 def select_most_noisy_vms(num_vms, traffic_matrix, original_placement, physical_config, num_top_noisy_vms, fixed_vms, link_traffic):
     #return [0, 1]
 
-    num_congestion_flows = int(num_top_noisy_vms / 2)
+    num_congestion_flows = int(num_top_noisy_vms / 3)
 
     indice_largest_flows = compute_largest_flows(num_vms, traffic_matrix, original_placement, physical_config, num_top_noisy_vms - num_congestion_flows, fixed_vms)
 
@@ -28,20 +28,45 @@ def compute_largest_flows(num_vms, traffic_matrix, original_placement, physical_
     return indice
 
 def compute_congestion_flows(num_vms, traffic_matrix, original_placement, physical_config, num_top_noisy_vms, fixed_vms, link_traffic, indice_exclude = []):
-    busiest_link = link_traffic.index(max(link_traffic))
+    # c is the number of the busiest links
+    c = 3
 
-    vm_contribution_to_busiest_link = [0 for k in range(num_vms)]
+    candidate_indice = []
+    for loop_variable in range(c):
+        busiest_link = link_traffic.index(max(link_traffic))
+        link_traffic[busiest_link] = 0
 
-    for p in range(num_vms):
-        rack_p = physical_config.which_rack[original_placement[p]]
-        for q in range(p+1, num_vms):
-            rack_q = physical_config.which_rack[original_placement[q]]
-            if rack_p == busiest_link and rack_q != busiest_link or rack_p != busiest_link and rack_q == busiest_link:
-                vm_contribution_to_busiest_link[p] += traffic_matrix[p][q]
-                vm_contribution_to_busiest_link[q] += traffic_matrix[p][q]
+        vm_contribution_to_busiest_link = [0 for k in range(num_vms)]
 
-    indice = select_top_k_max(traffic_list = vm_contribution_to_busiest_link, k = num_top_noisy_vms, fixed_vms = fixed_vms+indice_exclude)
-    return indice
+        for p in range(num_vms):
+            rack_p = physical_config.which_rack[original_placement[p]]
+            for q in range(p+1, num_vms):
+                rack_q = physical_config.which_rack[original_placement[q]]
+                if rack_p == busiest_link and rack_q != busiest_link or rack_p != busiest_link and rack_q == busiest_link:
+                    vm_contribution_to_busiest_link[p] += traffic_matrix[p][q]
+                    vm_contribution_to_busiest_link[q] += traffic_matrix[p][q]
+        indice = select_top_k_max(traffic_list = vm_contribution_to_busiest_link, k = num_top_noisy_vms/c, fixed_vms = fixed_vms+indice_exclude+candidate_indice)
+        candidate_indice += indice
+
+    return candidate_indice
+
+
+
+
+#    busiest_link = link_traffic.index(max(link_traffic))
+
+#    vm_contribution_to_busiest_link = [0 for k in range(num_vms)]
+
+#    for p in range(num_vms):
+ #       rack_p = physical_config.which_rack[original_placement[p]]
+  #      for q in range(p+1, num_vms):
+   #         rack_q = physical_config.which_rack[original_placement[q]]
+    #        if rack_p == busiest_link and rack_q != busiest_link or rack_p != busiest_link and rack_q == busiest_link:
+     #           vm_contribution_to_busiest_link[p] += traffic_matrix[p][q]
+      #          vm_contribution_to_busiest_link[q] += traffic_matrix[p][q]
+
+#    indice = select_top_k_max(traffic_list = vm_contribution_to_busiest_link, k = num_top_noisy_vms, fixed_vms = fixed_vms+indice_exclude)
+#    return indice
 
 
 
