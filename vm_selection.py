@@ -29,7 +29,7 @@ def compute_largest_flows(num_vms, traffic_matrix, original_placement, physical_
 
 def compute_congestion_flows(num_vms, traffic_matrix, original_placement, physical_config, num_top_noisy_vms, fixed_vms, link_traffic, indice_exclude = []):
     # c is the number of the busiest links
-    c = 3
+    c = 2
 
     candidate_indice = []
     for loop_variable in range(c):
