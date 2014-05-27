@@ -53,13 +53,15 @@ def compute_traffic(num_vms, traffic, placement, test_config):
                 continue
             link_traffic[rack_p] += traffic[p][q]
             link_traffic[rack_q] += traffic[q][p]
+
+    maximum = max(link_traffic)
     
-    return link_traffic, max(link_traffic)
+    return link_traffic, maximum, link_traffic.index(maximum)
 
 
 
 if __name__ == '__main__':
-    test_case = fake_input("test1.in")
+    test_case = fake_input("test2.in")
 
     config = test_case['physical_config']
 
@@ -67,7 +69,7 @@ if __name__ == '__main__':
     print 'num_racks', config.num_racks
     print 'num_servers', config.num_servers
 
-    operations = migrate_policy(test_case['num_servers'], test_case['vm_consume'], test_case['vm_matrix'], test_case['original_placement'], config, 15, [], cost_migration = [])
+    operations = migrate_policy(test_case['num_servers'], test_case['vm_consume'], test_case['vm_matrix'], test_case['original_placement'], config, 6, [], cost_migration = [])
 
     link_traffic = compute_traffic(test_case['num_servers'], test_case['vm_matrix'], test_case['original_placement'], config)
     print "before migration:", link_traffic
@@ -77,3 +79,4 @@ if __name__ == '__main__':
     
     link_traffic = compute_traffic(test_case['num_servers'], test_case['vm_matrix'], test_case['original_placement'], config)
     print "after migration:", link_traffic
+    #print "which rack", config.which_rack

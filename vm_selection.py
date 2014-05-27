@@ -1,7 +1,7 @@
 def select_most_noisy_vms(num_vms, traffic_matrix, original_placement, physical_config, num_top_noisy_vms, fixed_vms, link_traffic):
     #return [0, 1]
 
-    num_congestion_flows = int(num_top_noisy_vms / 3)
+    num_congestion_flows = num_top_noisy_vms * 2 / 3
 
     indice_largest_flows = compute_largest_flows(num_vms, traffic_matrix, original_placement, physical_config, num_top_noisy_vms - num_congestion_flows, fixed_vms)
 

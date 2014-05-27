@@ -106,8 +106,10 @@ def compute_traffic(num_vms, traffic, placement, test_config):
                 continue
             link_traffic[rack_p] += traffic[p][q]
             link_traffic[rack_q] += traffic[q][p]
+
+    maximum = max(link_traffic)
     
-    return link_traffic, max(link_traffic)
+    return link_traffic, maximum, link_traffic.index(maximum)
 
 
 

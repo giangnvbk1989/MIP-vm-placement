@@ -153,11 +153,12 @@ def set_problem_data(p, num_vms, vm_consumption, vm_traffic_matrix, original_pla
     # ====================
     
     # the objectiv is to be refined
-    objective = [0 for k in range(M*N+M*(M-1)/2*N*N+physical_config.num_links*2)]
-    objective.append(1)
+    objective = [0.0 for k in range(M*N+M*(M-1)/2*N*N+physical_config.num_links*2)]
+    objective.append(1.0)
     for k in range(M):
         rack = physical_config.which_rack[original_placement[most_noisy_vms[k]]]
         objective[N*k + rack] = -cost_migration[most_noisy_vms[k]]
+        print "              ", rack, N*k+rack, objective[N*k + rack]
 
 
     # ====================
@@ -268,13 +269,13 @@ def process_result(placement, num_top_noisy_vms, most_noisy_vms, original_placem
 
 
 # TODO this is debugging
-#    numcols = placement.variables.get_num()
+    numcols = placement.variables.get_num()
 #    numrows = placement.linear_constraints.get_num()
 #    slack = sol.get_linear_slacks()
 #    x     = sol.get_values()
 #
 #
-#    for j in range(numcols):
+#    for j in range(2232, numcols):
 #        print "Column %d:  Value = %10f" % (j, x[j])
 
 
@@ -292,8 +293,10 @@ def process_result(placement, num_top_noisy_vms, most_noisy_vms, original_placem
             print vm, ": stays in rack", which_rack[original_placement[vm]]
         else:
             for i in range(num_racks):
-                #print sol.get_values(k*num_racks + i)
-                if 1 == sol.get_values(k*num_racks + i):
+                #if vm == 131:
+                    #print sol.get_values(k*num_racks + i)
+                solution_value = sol.get_values(k*num_racks + i)    
+                if 1+0.001 > solution_value and 1-0.001 < solution_value:
                     print vm, ": originally in rack", which_rack[original_placement[vm]], ", now moves to rack", i
                     migration_operations.append([vm, i])
                     break
