@@ -18,6 +18,6 @@ def choose_server_in_rack(migrate_to_rack, vm_consumption, physical_config):
         operations.append([vm, server_with_most_memory])
 
         
-    print "final operations", operations
+    #print "final operations", operations
     return operations
 

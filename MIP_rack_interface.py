@@ -158,7 +158,7 @@ def set_problem_data(p, num_vms, vm_consumption, vm_traffic_matrix, original_pla
     for k in range(M):
         rack = physical_config.which_rack[original_placement[most_noisy_vms[k]]]
         objective[N*k + rack] = -cost_migration[most_noisy_vms[k]]
-        print "              ", rack, N*k+rack, objective[N*k + rack]
+       #print "              ", rack, N*k+rack, objective[N*k + rack]
 
 
     # ====================
@@ -203,7 +203,7 @@ def set_problem_data(p, num_vms, vm_consumption, vm_traffic_matrix, original_pla
 
     add_constraints(p, M, vm_consumption, original_placement, vm_traffic_matrix, link_capacity_consumed, physical_config, num_all_vms, most_noisy_vms)
 
-    print "the problem data has been set!"
+   #print "the problem data has been set!"
 
 
 
@@ -220,9 +220,9 @@ def set_and_solve_problem(num_vms, vm_consumption, vm_traffic_matrix, original_p
     #placement.parameters.threads.set(1)
     placement.parameters.emphasis.mip.set(1)
     placement.parameters.emphasis.memory.set(1)
-    #placement.parameters.mip.display.set(0)
+    placement.parameters.mip.display.set(0)
 
-#    print "begin to add the start solution"
+#   #print "begin to add the start solution"
 #    for k in range(M):
 #        indices = list(range(k*N, (k+1)*N))
 #        values = [0 for i in range(N)]
@@ -233,11 +233,11 @@ def set_and_solve_problem(num_vms, vm_consumption, vm_traffic_matrix, original_p
 
     #return 
     
-    print "begin solving..."
+   #print "begin solving..."
     placement.solve()
 
     #placement.write("openstack_output.txt")
-    print "Get the solution"
+   #print "Get the solution"
 
     return placement
 
@@ -276,28 +276,29 @@ def process_result(placement, num_top_noisy_vms, most_noisy_vms, original_placem
 #
 #
 #    for j in range(2232, numcols):
-#        print "Column %d:  Value = %10f" % (j, x[j])
+#       #print "Column %d:  Value = %10f" % (j, x[j])
 
 
     # solution.get_status() returns an integer code
-    print "Solution status = " , sol.get_status(), ":",
-    # the following line prints the corresponding string
-    print sol.status[sol.get_status()]
-    print "Solution value  = ", sol.get_objective_value()
+   #print "Solution status = " , sol.get_status(), ":",
+    # the following line#prints the corresponding string
+   #print sol.status[sol.get_status()]
+   #print "Solution value  = ", sol.get_objective_value()
 
-    print "number of top noisy vms: ", num_top_noisy_vms
-    print most_noisy_vms
+   #print "number of top noisy vms: ", num_top_noisy_vms
+   #print most_noisy_vms
     for k in range(num_top_noisy_vms):
         vm = most_noisy_vms[k]
         if 1 == sol.get_values(which_rack[original_placement[vm]] + k*num_racks):
-            print vm, ": stays in rack", which_rack[original_placement[vm]]
+            pass
+           #print vm, ": stays in rack", which_rack[original_placement[vm]]
         else:
             for i in range(num_racks):
                 #if vm == 131:
                     #print sol.get_values(k*num_racks + i)
                 solution_value = sol.get_values(k*num_racks + i)    
                 if 1+0.001 > solution_value and 1-0.001 < solution_value:
-                    print vm, ": originally in rack", which_rack[original_placement[vm]], ", now moves to rack", i
+                   #print vm, ": originally in rack", which_rack[original_placement[vm]], ", now moves to rack", i
                     migration_operations.append([vm, i])
                     break
 
@@ -332,7 +333,7 @@ def migrate_policy(num_vms, vm_consumption, vm_traffic_matrix, original_placemen
     # compute current traffic state of each link
     no_vms = []
     link_state = compute_link_used_capacity(num_vms, original_placement, vm_traffic_matrix, no_vms, physical_config)
-    print "traffic on each link: ", link_state
+   #print "traffic on each link: ", link_state
 
     most_noisy_vms = select_most_noisy_vms(num_vms, vm_traffic_matrix, original_placement, physical_config, num_top_noisy_vms, fixed_vms, link_state)
     if len(most_noisy_vms) < num_vms:
@@ -360,9 +361,9 @@ def migrate_policy(num_vms, vm_consumption, vm_traffic_matrix, original_placemen
 
     # compute how much capacity has been used in each link (between fixed vm and fixed vm)
     link_capacity_consumed = compute_link_used_capacity(num_vms, original_placement, vm_traffic_matrix, most_noisy_vms, physical_config)
-    print "link_capacity_consumed:", link_capacity_consumed
+   #print "link_capacity_consumed:", link_capacity_consumed
 
-    print "begin set_and_solve_problem"
+   #print "begin set_and_solve_problem"
     placement = set_and_solve_problem(num_top_noisy_vms, busy_vm_consumption, vm_traffic_matrix, original_placement, physical_config, cost_migration, num_vms, most_noisy_vms, link_capacity_consumed)
 
     migrate_to_rack = process_result(placement, num_top_noisy_vms, most_noisy_vms, original_placement, physical_config.num_racks, physical_config.which_rack)
