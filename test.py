@@ -86,8 +86,8 @@ def test_0():
     
         operations = migrate_policy(test_case['num_servers'], test_case['vm_consume'], test_case['vm_matrix'], test_case['original_placement'], config, c, [], cost_migration = [])
 
-        #link_traffic = compute_traffic(test_case['num_servers'], test_case['vm_matrix'], test_case['original_placement'], config)
-        #print "before migration:", link_traffic
+        link_traffic = compute_traffic(test_case['num_servers'], test_case['vm_matrix'], test_case['original_placement'], config)
+        print "before migration:", link_traffic
         new_placement = test_case['original_placement'][:]
         for migration in operations:
             new_placement[migration[0]] = migration[1]
