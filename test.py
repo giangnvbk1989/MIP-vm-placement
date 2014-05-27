@@ -1,6 +1,7 @@
 import json
 from physical_configuration import PhysicalConfig
 from MIP_rack_interface import migrate_policy
+import copy
 
 def fake_input(file_name):
     # input
@@ -43,8 +44,15 @@ def fake_input(file_name):
     link_capacity = link_capacity)
     return fake_input
 
-def compute_traffic(num_vms, traffic, placement, test_config):
+
+def compute_traffic(num_vms, traffic_matrix, placement, test_config):
     link_traffic = [0 for k in range(test_config.num_links)]
+
+    traffic = [[0 for i in range(num_vms)] for k in range(num_vms)]
+    
+    for k in range(num_vms):
+        for i in range(num_vms):
+            traffic[k][i] = traffic_matrix[k][i] + traffic_matrix[i][k]
 
     for p in range(num_vms):
         for q in range(p+1, num_vms):
@@ -68,10 +76,13 @@ def test_0():
     print 'num_racks', config.num_racks
     print 'num_servers', config.num_servers
 
-    print compute_traffic(test_case['num_servers'], test_case['vm_matrix'], test_case['original_placement'], config)
+    matrix = copy.deepcopy(test_case['vm_matrix'])
+
+
+    print compute_traffic(test_case['num_servers'], matrix, test_case['original_placement'], config)
 
     for k in range(1):
-        c = 24
+        c = 9
     
         operations = migrate_policy(test_case['num_servers'], test_case['vm_consume'], test_case['vm_matrix'], test_case['original_placement'], config, c, [], cost_migration = [])
 
@@ -81,7 +92,7 @@ def test_0():
         for migration in operations:
             new_placement[migration[0]] = migration[1]
     
-        traffic, max_value, index = compute_traffic(test_case['num_servers'], test_case['vm_matrix'], new_placement, config)
+        traffic, max_value, index = compute_traffic(test_case['num_servers'], matrix, new_placement, config)
 
         print "c:", c, "migration", len(operations), "max:", max_value, "link", index
         print traffic

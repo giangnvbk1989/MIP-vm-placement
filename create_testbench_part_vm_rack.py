@@ -96,8 +96,14 @@ def generate_vm_consumption():
     #print "vm consumption", vm_consumption
     return vm_consumption
 
-def compute_traffic(num_vms, traffic, placement, test_config):
+def compute_traffic(num_vms, traffic_matrix, placement, test_config):
     link_traffic = [0 for k in range(test_config.num_links)]
+
+    traffic = [[0 for i in range(num_vms)] for k in range(num_vms)]
+    
+    for k in range(num_vms):
+        for i in range(num_vms):
+            traffic[k][i] = traffic_matrix[k][i] + traffic_matrix[i][k]
 
     for p in range(num_vms):
         for q in range(p+1, num_vms):

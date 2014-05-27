@@ -267,13 +267,13 @@ def process_result(placement, num_top_noisy_vms, most_noisy_vms, original_placem
 
 
 # TODO this is debugging
-#    numcols = placement.variables.get_num()
+    numcols = placement.variables.get_num()
 #    numrows = placement.linear_constraints.get_num()
 #    slack = sol.get_linear_slacks()
-#    x     = sol.get_values()
+    x     = sol.get_values()
 #
 #
-#    for j in range(2232, numcols):
+#    for j in range(40033, numcols):
 #        print "Column %d:  Value = %10f" % (j, x[j])
 
 
@@ -324,7 +324,7 @@ def migrate_policy(num_vms, vm_consumption, vm_traffic_matrix, original_placemen
     # adjustable parameters
     #num_top_noisy_vms = 2
     if cost_migration == []:
-        cost_migration = [1 for k in range(num_vms)]
+        cost_migration = [0 for k in range(num_vms)]
 
     if num_top_noisy_vms > num_vms:
         num_top_noisy_vms = num_vms
