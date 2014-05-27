@@ -158,8 +158,6 @@ def set_problem_data(p, num_vms, vm_consumption, vm_traffic_matrix, original_pla
     for k in range(M):
         rack = physical_config.which_rack[original_placement[most_noisy_vms[k]]]
         objective[N*k + rack] = -cost_migration[most_noisy_vms[k]]
-        print "              ", rack, N*k+rack, objective[N*k + rack]
-
 
     # ====================
     # variables
@@ -269,7 +267,7 @@ def process_result(placement, num_top_noisy_vms, most_noisy_vms, original_placem
 
 
 # TODO this is debugging
-    numcols = placement.variables.get_num()
+#    numcols = placement.variables.get_num()
 #    numrows = placement.linear_constraints.get_num()
 #    slack = sol.get_linear_slacks()
 #    x     = sol.get_values()
@@ -289,7 +287,8 @@ def process_result(placement, num_top_noisy_vms, most_noisy_vms, original_placem
     print most_noisy_vms
     for k in range(num_top_noisy_vms):
         vm = most_noisy_vms[k]
-        if 1 == sol.get_values(which_rack[original_placement[vm]] + k*num_racks):
+        solution_value = sol.get_values(which_rack[original_placement[vm]] + k*num_racks)
+        if 1-0.001 < solution_value and 1+0.001 > solution_value:
             print vm, ": stays in rack", which_rack[original_placement[vm]]
         else:
             for i in range(num_racks):
