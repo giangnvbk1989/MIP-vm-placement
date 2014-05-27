@@ -59,9 +59,8 @@ def compute_traffic(num_vms, traffic, placement, test_config):
     return link_traffic, maximum, link_traffic.index(maximum)
 
 
-
-if __name__ == '__main__':
-    test_case = fake_input("test2.in")
+def test_0():
+    test_case = fake_input("test1.in")
 
     config = test_case['physical_config']
 
@@ -69,14 +68,66 @@ if __name__ == '__main__':
     print 'num_racks', config.num_racks
     print 'num_servers', config.num_servers
 
-    operations = migrate_policy(test_case['num_servers'], test_case['vm_consume'], test_case['vm_matrix'], test_case['original_placement'], config, 6, [], cost_migration = [])
+    print compute_traffic(test_case['num_servers'], test_case['vm_matrix'], test_case['original_placement'], config)
 
-    link_traffic = compute_traffic(test_case['num_servers'], test_case['vm_matrix'], test_case['original_placement'], config)
-    print "before migration:", link_traffic
-
-    for migration in operations:
-        test_case['original_placement'][migration[0]] = migration[1]
+    for k in range(1):
+        c = 24
     
-    link_traffic = compute_traffic(test_case['num_servers'], test_case['vm_matrix'], test_case['original_placement'], config)
-    print "after migration:", link_traffic
-    #print "which rack", config.which_rack
+        operations = migrate_policy(test_case['num_servers'], test_case['vm_consume'], test_case['vm_matrix'], test_case['original_placement'], config, c, [], cost_migration = [])
+
+        #link_traffic = compute_traffic(test_case['num_servers'], test_case['vm_matrix'], test_case['original_placement'], config)
+        #print "before migration:", link_traffic
+        new_placement = test_case['original_placement'][:]
+        for migration in operations:
+            new_placement[migration[0]] = migration[1]
+    
+        traffic, max_value, index = compute_traffic(test_case['num_servers'], test_case['vm_matrix'], new_placement, config)
+
+        print "c:", c, "migration", len(operations), "max:", max_value, "link", index
+        print traffic
+
+
+
+
+
+
+def test_1():
+    test_case = fake_input("test1.in")
+
+    config = test_case['physical_config']
+
+    print 'num_vms', test_case['num_servers']
+    print 'num_racks', config.num_racks
+    print 'num_servers', config.num_servers
+
+    print compute_traffic(test_case['num_servers'], test_case['vm_matrix'], test_case['original_placement'], config)
+
+    for k in range(10):
+        c = (k+1)*3
+    
+        operations = migrate_policy(test_case['num_servers'], test_case['vm_consume'], test_case['vm_matrix'], test_case['original_placement'], config, c, [], cost_migration = [])
+
+        #link_traffic = compute_traffic(test_case['num_servers'], test_case['vm_matrix'], test_case['original_placement'], config)
+        #print "before migration:", link_traffic
+        new_placement = test_case['original_placement'][:]
+        for migration in operations:
+            new_placement[migration[0]] = migration[1]
+    
+        traffic, max_value, index = compute_traffic(test_case['num_servers'], test_case['vm_matrix'], new_placement, config)
+
+        print "c:", c, "migration", len(operations), "max:", max_value, "link", index
+        #print traffic
+
+
+        #print "after migration:", link_traffic
+        #print "which rack", config.which_rack
+    
+
+if __name__ == '__main__':
+    test_0()
+
+
+
+
+
+
