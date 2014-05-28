@@ -331,7 +331,7 @@ def migrate_policy(num_vms, vm_consumption, vm_traffic_matrix, original_placemen
     # adjustable parameters
     #num_top_noisy_vms = 2
     if cost_migration == []:
-        cost_migration = [1 for k in range(num_vms)]
+        cost_migration = [10 for k in range(num_vms)]
 
     if num_top_noisy_vms > num_vms:
         num_top_noisy_vms = num_vms
