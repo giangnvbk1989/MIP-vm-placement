@@ -284,12 +284,12 @@ def process_result(placement, num_top_noisy_vms, most_noisy_vms, original_placem
 
     # solution.get_status() returns an integer code
     #print "Solution status = " , sol.get_status(), ":",
-    # the following line prints the corresponding string
+    # the following line###prints the corresponding string
     #print sol.status[sol.get_status()]
     #print "Solution value  = ", sol.get_objective_value()
 
-    print "number of top noisy vms: ", num_top_noisy_vms
-    print most_noisy_vms
+   ###print "number of top noisy vms: ", num_top_noisy_vms
+   ###print most_noisy_vms
     for k in range(num_top_noisy_vms):
         vm = most_noisy_vms[k]
         solution_value = sol.get_values(which_rack[original_placement[vm]] + k*num_racks)
@@ -320,8 +320,7 @@ def make_matrix_symmetric(M, n):
 
 
 # the firt main interface
-def migrate_policy(num_vms, vm_consumption, vm_traffic_matrix, original_placement, config, num_top_noisy_vms = 15, fixed_vms = [], cost_migration = []):
-    steady_ratio = 0.05
+def migrate_policy(num_vms, vm_consumption, vm_traffic_matrix, original_placement, config, num_top_noisy_vms = 15, fixed_vms = [], cost_migration = [], steady_ratio = 0.05):
 
     # If the given traffic matrix M is not symmetric, I should replace it by M+M^T
     traffic_matrix = copy.deepcopy(vm_traffic_matrix)
@@ -385,7 +384,7 @@ def migrate_policy(num_vms, vm_consumption, vm_traffic_matrix, original_placemen
     new_link_state = compute_link_used_capacity(num_vms, new_placement, vm_traffic_matrix, no_vms, physical_config)
     new_max_traffic = max(new_link_state)
     if (max_traffic - new_max_traffic)*1.0/max_traffic < steady_ratio:
-        print "uniform!!! no migration!!!"
+       ###print "uniform!!! no migration!!!"
         migrate_to_server = []
 
     

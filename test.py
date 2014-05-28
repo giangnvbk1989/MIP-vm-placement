@@ -2,6 +2,7 @@ import json
 from physical_configuration import PhysicalConfig
 from MIP_rack_interface import migrate_policy
 import copy
+import time
 
 def fake_input(file_name):
     # input
@@ -81,12 +82,22 @@ def test_0():
 
     print compute_traffic(test_case['num_servers'], matrix, test_case['original_placement'], config)
 
-    for k in range(1):
-        c = 9
+    timer = 0
+
+    for k in range(3):
+        c = 18
     
         cost = [1 for k in range(test_case['num_servers'])]
         
+        time_point = time.clock()
+        print "clock1:%s" % time_point
         operations = migrate_policy(test_case['num_servers'], test_case['vm_consume'], test_case['vm_matrix'], test_case['original_placement'], config, c, [], cost_migration = cost)
+        how_long = time.clock()
+        print "clock2:%s" % how_long
+        timer += how_long - time_point
+        
+
+
 
         link_traffic, aaa, bbb = compute_traffic(test_case['num_servers'], test_case['vm_matrix'], test_case['original_placement'], config)
         print "before migration:", sorted(link_traffic, reverse = True)
@@ -101,12 +112,14 @@ def test_0():
 
         print (aaa-max_value)*1.0/aaa
 
+    print timer/3.0
+
 
 
 
 
 def test_1():
-    test_case = fake_input("test1.in")
+    test_case = fake_input("test3.in")
 
     config = test_case['physical_config']
 
@@ -118,12 +131,12 @@ def test_1():
 
     new_placement = test_case['original_placement'][:]
 
-    for k in range(5):
+    for k in range(7):
         c = 18
 
         cost = [100 for k in range(test_case['num_servers'])]
     
-        operations = migrate_policy(test_case['num_servers'], test_case['vm_consume'], test_case['vm_matrix'], new_placement, config, c, [], cost_migration = [])
+        operations = migrate_policy(test_case['num_servers'], test_case['vm_consume'], test_case['vm_matrix'], new_placement, config, c, [], cost_migration = [], steady_ratio = 0.02)
 
         #link_traffic = compute_traffic(test_case['num_servers'], test_case['vm_matrix'], test_case['original_placement'], config)
         #print "before migration:", link_traffic
@@ -141,4 +154,4 @@ def test_1():
     
 
 if __name__ == '__main__':
-    test_1()
+    test_0()
