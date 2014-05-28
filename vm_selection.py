@@ -8,8 +8,8 @@ def select_most_noisy_vms(num_vms, traffic_matrix, original_placement, physical_
     #print ans, indice
     indice_congestion_flows = compute_congestion_flows(num_vms, traffic_matrix, original_placement, physical_config, num_congestion_flows, fixed_vms, link_traffic, indice_largest_flows)
     
-    print "congestion vms:", indice_congestion_flows
-    print "largest traffic vms", indice_largest_flows
+    #print "congestion vms:", indice_congestion_flows
+    #print "largest traffic vms", indice_largest_flows
     indice = indice_congestion_flows + indice_largest_flows
 
     return indice
