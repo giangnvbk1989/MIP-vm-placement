@@ -68,7 +68,7 @@ def compute_traffic(num_vms, traffic_matrix, placement, test_config):
 
 
 def test_0():
-    test_case = fake_input("test1.in")
+    test_case = fake_input("test3.in")
 
     config = test_case['physical_config']
 
@@ -84,10 +84,12 @@ def test_0():
     for k in range(1):
         c = 9
     
-        operations = migrate_policy(test_case['num_servers'], test_case['vm_consume'], test_case['vm_matrix'], test_case['original_placement'], config, c, [], cost_migration = [])
+        cost = [1 for k in range(test_case['num_servers'])]
+        
+        operations = migrate_policy(test_case['num_servers'], test_case['vm_consume'], test_case['vm_matrix'], test_case['original_placement'], config, c, [], cost_migration = cost)
 
-        link_traffic = compute_traffic(test_case['num_servers'], test_case['vm_matrix'], test_case['original_placement'], config)
-        print "before migration:", link_traffic
+        link_traffic, aaa, bbb = compute_traffic(test_case['num_servers'], test_case['vm_matrix'], test_case['original_placement'], config)
+        print "before migration:", sorted(link_traffic, reverse = True)
         new_placement = test_case['original_placement'][:]
         for migration in operations:
             new_placement[migration[0]] = migration[1]
@@ -95,8 +97,9 @@ def test_0():
         traffic, max_value, index = compute_traffic(test_case['num_servers'], matrix, new_placement, config)
 
         print "c:", c, "migration", len(operations), "max:", max_value, "link", index
-        print traffic
+        print sorted(traffic, reverse = True)
 
+        print (aaa-max_value)*1.0/aaa
 
 
 
@@ -113,14 +116,17 @@ def test_1():
 
     print compute_traffic(test_case['num_servers'], test_case['vm_matrix'], test_case['original_placement'], config)
 
-    for k in range(10):
-        c = (k+1)*3
+    new_placement = test_case['original_placement'][:]
+
+    for k in range(5):
+        c = 18
+
+        cost = [100 for k in range(test_case['num_servers'])]
     
-        operations = migrate_policy(test_case['num_servers'], test_case['vm_consume'], test_case['vm_matrix'], test_case['original_placement'], config, c, [], cost_migration = [])
+        operations = migrate_policy(test_case['num_servers'], test_case['vm_consume'], test_case['vm_matrix'], new_placement, config, c, [], cost_migration = [])
 
         #link_traffic = compute_traffic(test_case['num_servers'], test_case['vm_matrix'], test_case['original_placement'], config)
         #print "before migration:", link_traffic
-        new_placement = test_case['original_placement'][:]
         for migration in operations:
             new_placement[migration[0]] = migration[1]
     
@@ -135,4 +141,4 @@ def test_1():
     
 
 if __name__ == '__main__':
-    test_0()
+    test_1()
