@@ -84,16 +84,16 @@ def test_0():
 
     timer = 0
 
-    for k in range(3):
-        c = 18
+    for k in range(1):
+        c = 27
     
         cost = [1 for k in range(test_case['num_servers'])]
         
         time_point = time.clock()
-        print "clock1:%s" % time_point
+        #print "clock1:%s" % time_point
         operations = migrate_policy(test_case['num_servers'], test_case['vm_consume'], test_case['vm_matrix'], test_case['original_placement'], config, c, [], cost_migration = cost)
         how_long = time.clock()
-        print "clock2:%s" % how_long
+        #print "clock2:%s" % how_long
         timer += how_long - time_point
         
 
@@ -112,7 +112,7 @@ def test_0():
 
         print (aaa-max_value)*1.0/aaa
 
-    print timer/3.0
+    #print timer/3.0
 
 
 

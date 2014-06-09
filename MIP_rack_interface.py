@@ -222,7 +222,7 @@ def set_and_solve_problem(num_vms, vm_consumption, vm_traffic_matrix, original_p
     #placement.parameters.threads.set(1)
     placement.parameters.emphasis.mip.set(1)
     placement.parameters.emphasis.memory.set(1)
-    placement.parameters.mip.display.set(0)
+    placement.parameters.mip.display.set(2)
 
 #    print "begin to add the start solution"
 #    for k in range(M):
