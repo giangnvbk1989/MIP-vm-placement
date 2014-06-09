@@ -1,6 +1,6 @@
 import json
 from physical_configuration import PhysicalConfig
-from MIP_rack_interface import migrate_policy
+from naive_strategy import migrate_policy
 import copy
 import time
 
@@ -116,6 +116,16 @@ def test_0():
 
 
 
+def test_naive():
+    test_case = fake_input("test3.in")
+
+    config = test_case['physical_config']
+
+    c = 18
+
+    operations = migrate_policy(test_case['num_servers'], test_case['vm_consume'], test_case['vm_matrix'], test_case['original_placement'], config, c, [], cost_migration = [], steady_ratio = 0.02)
+
+
 
 
 def test_1():
@@ -154,4 +164,4 @@ def test_1():
     
 
 if __name__ == '__main__':
-    test_0()
+    test_naive()
